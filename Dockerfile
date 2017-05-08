@@ -8,4 +8,4 @@ RUN apk add --update py-pip
 
 RUN pip install pycrypto
 
-add create_keys.py ./create_keys.py
+ADD create_keys.py ./create_keys.py
