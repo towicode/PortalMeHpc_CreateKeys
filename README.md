@@ -2,7 +2,7 @@
 
 Basic python script to create SSH keys. Supports RSA and DSA.
 Requires pycrypto
-
+```
 usage: create_keys.py [-h] [-p [PUBLIC]] [-P [PRIVATE]] [-f [FROM_ARGS]] [-v]
                       [-k [KEY_TYPE]]
 
@@ -22,3 +22,4 @@ optional arguments:
 
 As an alternative to the commandline, params can be placed in a file, one per
 line, and specified on the commandline like 'create_keys.py @params.conf'.
+```
