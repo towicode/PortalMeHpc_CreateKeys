@@ -64,7 +64,7 @@ if __name__ == '__main__':
   parser.add_argument(
                       "-p",
                       "--public",
-                      help="public key location. Give full path + filename",
+                      help="public key output location. Give full path + filename",
                       nargs="?",
                       default="/tmp/public.key",
                       type=str)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
   parser.add_argument(
                       "-P",
                       "--private",
-                      help="private key location. Give full path + filename",
+                      help="private key output location. Give full path + filename",
                       nargs="?",
                       default="/tmp/private.key",
                       type=str)
@@ -106,6 +106,9 @@ if __name__ == '__main__':
     loglevel = logging.DEBUG
   else:
     loglevel = logging.INFO
+
+  args.from_args = args.from_args.replace("-","/")
+  args.from_args = args.from_args.replace("..",",")
   
   use_dsa = False
   if (args.KEY_TYPE.lower() == "dsa"):
