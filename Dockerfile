@@ -7,5 +7,7 @@ RUN apk add --update openssh
 RUN apk add --update py-pip
 
 RUN pip install pycrypto
+RUN pip install pexpect
 
 ADD create_keys.py ./create_keys.py
+
