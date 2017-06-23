@@ -9,5 +9,6 @@ RUN apk add --update py-pip
 RUN pip install pycrypto
 RUN pip install pexpect
 
-ADD create_keys.py ./create_keys.py
-
+ADD create_keys.py /usr/bin
+RUN chmod +x /usr/bin/create_keys.py
+ENTRYPOINT ["create_keys.py"]

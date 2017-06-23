@@ -9,6 +9,7 @@ from Crypto.PublicKey import RSA
 from Crypto.PublicKey import DSA
 import os
 import pexpect
+import time
 
 
 def login_uofa(args, mem_file):
@@ -18,23 +19,40 @@ def login_uofa(args, mem_file):
 
     child = pexpect.spawn("ssh " + str(args.user) +
                           "@" + str(args.hostname) + "")
-
-    index = child.expect(['Are you sure you want to continue connecting*', pexpect.EOF, pexpect.TIMEOUT], timeout=5)
+    
+    index = child.expect(['Are you sure you want to continue connecting*', pexpect.EOF, pexpect.TIMEOUT], timeout=2)
     if index == 0: 
-        child.sendline("yes")                  
-    child.expect("Password*")
-    child.sendline(args.password)
-    child.expect("Enter a passcode*")
-    child.sendline(args.tfa_key)
-    child.expect("Shortcut commands to access*")
+        child.sendline("yes")  
+
+    index = child.expect(['~]\$', pexpect.EOF, pexpect.TIMEOUT], timeout=1)
+    if index != 0:
+                
+        child.expect("Password*")
+        child.sendline(args.password)
+        child.expect("Enter a passcode*")
+        child.sendline(args.tfa_key)
+        child.expect("~]\$")
+        time.sleep(3)
 
     logging.debug("hopefully we are inside the HPC")
     child.sendline('echo "' + mem_file +
                    '" | cat >> ~/.ssh/authorized_keys')
-    child.sendline('ls')
-    child.sendline("touch testfile")
+    time.sleep(1)
+    child.expect("~]\$")
+    logging.debug(child.before)
+
+    child.sendline("touch .portalme")
+    time.sleep(1)
+    child.expect("~]\$")
+    logging.debug(child.before)
+
+    child.sendline("ls -lah")
+    child.expect("~]\$")
+    logging.debug(child.before)
+
+    # logging.debug(child.after)
     logging.info("Created file!")
-    print child.before
+    #logging.debug(str(child))
 
     # gargs = args.commands.split("..")
 
@@ -233,9 +251,10 @@ if __name__ == '__main__':
         loglevel = logging.DEBUG
     else:
         loglevel = logging.INFO
-
-    args.from_args = args.from_args.replace("-", "/")
-    args.from_args = args.from_args.replace("..", ",")
+    
+    if (args.from_args is not None and args.from_args is not ""):
+        args.from_args = args.from_args.replace("-", "/")
+        args.from_args = args.from_args.replace("..", ",")
 
     use_dsa = False
     if (args.KEY_TYPE.lower() == "dsa"):
